@@ -14,6 +14,12 @@ mvn clean test
 mvn verify
 ```
 
+## Hướng dẫn tích hợp cho khách hàng
+
+Tài liệu hướng dẫn đầy đủ từ việc tạo file CSV đầu vào, tạo metadata, gọi thư viện bằng `Path`/stream, đọc tổng hóa đơn, ghi CSV đầu ra và xử lý lỗi nằm tại [docs/CUSTOMER-INTEGRATION-SPEC.md](docs/CUSTOMER-INTEGRATION-SPEC.md).
+
+Thư viện là Java library, không phải command-line tool. Ứng dụng tích hợp chịu trách nhiệm mở file đầu vào và lưu file đầu ra.
+
 ## Sử dụng nhanh
 
 ```java
@@ -43,4 +49,4 @@ System.out.println(result.totalGross());
 - `declaredLineTotal` chỉ để đối chiếu, không thay thế phép tính.
 - Dữ liệu lỗi làm toàn bộ request thất bại theo fail-fast.
 
-Xem [docs/USER-GUIDE.md](docs/USER-GUIDE.md), [docs/CSV-SCHEMA.md](docs/CSV-SCHEMA.md) và [docs/DESIGN.md](docs/DESIGN.md) để biết chi tiết.
+Xem thêm [docs/USER-GUIDE.md](docs/USER-GUIDE.md), [docs/CSV-SCHEMA.md](docs/CSV-SCHEMA.md) và [docs/DESIGN.md](docs/DESIGN.md) để biết chi tiết kỹ thuật.
