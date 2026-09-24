@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kết quả | DemoInvoice</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="topbar"><a class="brand" href="/"><span class="brand-mark">IV</span><span>DemoInvoice</span></a><span class="topbar-note">Calculation complete</span></header>
+<main class="shell result-shell">
+  <div class="result-top"><div><p class="eyebrow">INVOICE RESULT / <span th:text="${result.metadata().invoiceId()}"></span></p><h1>Đã tính xong <em>hóa đơn.</em></h1><p class="lede" th:text="${fileName}"></p></div><a class="ghost-button" href="/">← Tính file khác</a></div>
+  <section class="summary-grid">
+    <div class="metric"><span>Tổng trước VAT</span><strong th:text="${result.totalNet()} + ' ₫'"></strong><small>NET VALUE</small></div>
+    <div class="metric accent"><span>Tổng VAT</span><strong th:text="${result.totalVat()} + ' ₫'"></strong><small>VAT TOTAL</small></div>
+    <div class="metric dark"><span>Khách hàng thanh toán</span><strong th:text="${result.totalGross()} + ' ₫'"></strong><small>GROSS TOTAL</small></div>
+  </section>
+  <section class="result-layout">
+    <div class="panel table-panel"><div class="panel-heading"><span class="step">03</span><div><h2>Chi tiết dòng hàng</h2><p th:text="${result.validLineCount()} + ' dòng hợp lệ'">0 dòng hợp lệ</p></div></div><div class="table-wrap"><table><thead><tr><th>Dòng</th><th>Mặt hàng</th><th class="num">SL</th><th class="num">Đơn giá</th><th class="num">VAT</th><th class="num">Tiền VAT</th><th class="num">Thành tiền</th></tr></thead><tbody><tr th:each="line : ${result.lines}"><td class="muted" th:text="${line.lineNumber()}"></td><td><strong th:text="${line.itemCode()}"></strong><span class="item-name" th:text="${line.itemName()}"></span></td><td class="num" th:text="${line.quantity()}"></td><td class="num" th:text="${line.unitPrice()}"></td><td class="num"><span class="vat-pill" th:text="${line.vatRate()} + '%' "></span></td><td class="num" th:text="${line.lineVat()}"></td><td class="num strong" th:text="${line.lineGross()}"></td></tr></tbody></table></div></div>
+    <aside class="result-side"><div class="panel rate-panel"><div class="panel-heading compact"><div><h2>Theo thuế suất</h2><p>Đối chiếu từng nhóm VAT</p></div></div><div class="rate-row" th:each="rate : ${rates}"><span class="rate-label" th:text="${rate.label()} + '%' "></span><span class="rate-track"><i th:style="'width:' + ${rate.progress()} + '%' "></i></span><strong th:text="${rate.vat()} + ' ₫'"></strong></div></div><div class="panel download-panel"><span class="download-mark">↓</span><div><strong>CSV đã xử lý</strong><p>Giữ nguyên schema dòng hàng</p></div><a class="download-button" href="#" download="invoice-output.csv" id="download-link">Tải xuống</a></div></aside>
+  </section>
+  <div th:if="${!result.warnings().isEmpty()}" class="warning-banner"><strong>Có cảnh báo đối chiếu</strong><span th:each="warning : ${result.warnings()}" th:text="${warning}"></span></div>
+</main>
+<script th:inline="javascript">
+  const csv = /*[[${outputCsv}]]*/ '';
+  document.querySelector('#download-link').href = 'data:text/csv;charset=utf-8,' + encodeURIComponent('\uFEFF' + csv);
+</script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DemoInvoice | VAT workspace</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/"><span class="brand-mark">IV</span><span>DemoInvoice</span></a>
+  <span class="topbar-note">CSV VAT calculator</span>
+</header>
+<main class="shell">
+  <section class="intro">
+    <div>
+      <p class="eyebrow">INVOICE LAB / JAVA LIBRARY DEMO</p>
+      <h1>Kiểm tra hóa đơn<br><em>trước khi phát hành.</em></h1>
+      <p class="lede">Tải CSV hàng hóa, khai báo chính sách thuế và xem ngay số tiền khách hàng cần thanh toán.</p>
+    </div>
+    <div class="stamp"><strong>V1</strong><span>VND<br>VAT</span></div>
+  </section>
+
+  <div th:if="${error}" class="error-banner"><strong>Không thể xử lý file</strong><span th:text="${error}"></span></div>
+
+  <form class="workspace" method="post" action="/calculate" enctype="multipart/form-data">
+    <section class="panel upload-panel">
+      <div class="panel-heading"><span class="step">01</span><div><h2>Chọn dữ liệu</h2><p>CSV đầu vào của một hóa đơn</p></div></div>
+      <label class="dropzone" for="file">
+        <span class="upload-icon">↑</span>
+        <strong>Chọn file CSV</strong>
+        <span id="file-name">UTF-8 · tối đa 10 MB</span>
+        <input id="file" name="file" type="file" accept=".csv,text/csv" required>
+      </label>
+      <div class="csv-hint"><span class="dot"></span><span>Header: <code>lineNumber,itemCode,itemName,quantity,unitPrice,vatRate</code></span></div>
+    </section>
+
+    <section class="panel metadata-panel">
+      <div class="panel-heading"><span class="step">02</span><div><h2>Metadata hóa đơn</h2><p>Thông tin bắt buộc cho mỗi lần tính</p></div></div>
+      <div class="form-grid">
+        <label>Mã hóa đơn<input name="invoiceId" value="INV-2026-0001" required></label>
+        <label>Ngày lập<input name="invoiceDate" type="date" th:value="${today}" required></label>
+        <label>Tiền tệ<input name="currency" value="VND" required></label>
+        <label>Mã số thuế bên bán<input name="sellerTaxId" value="0123456789" required></label>
+        <label>Phiên bản chính sách<input name="taxPolicyVersion" value="VN-2026-01" required></label>
+        <label>Thuế suất cho phép<input name="allowedVatRates" value="0,5,8,10" required></label>
+      </div>
+      <div class="option-row">
+        <label class="toggle"><input name="priceIncludesVat" type="checkbox"><span></span><b>Đơn giá đã gồm VAT</b></label>
+        <label>Kiểu làm tròn<select name="roundingMode"><option th:each="mode : ${roundingModes}" th:value="${mode}" th:text="${mode}" th:selected="${mode.name() == 'HALF_UP'}"></option></select></label>
+        <label>Số lẻ tiền<input name="moneyScale" type="number" min="0" max="4" value="0" required></label>
+        <label>Delimiter<select name="delimiter"><option value=",">Dấu phẩy ,</option><option value=";">Chấm phẩy ;</option></select></label>
+      </div>
+    </section>
+
+    <aside class="side-rail">
+      <div class="rule-card"><span class="rule-number">A</span><div><strong>Giá chưa VAT</strong><p>Mặc định, thư viện tính net rồi cộng VAT theo từng dòng.</p></div></div>
+      <div class="rule-card"><span class="rule-number">B</span><div><strong>Fail-fast</strong><p>Dữ liệu sai sẽ trả mã lỗi và không tạo kết quả một phần.</p></div></div>
+      <button class="primary-button" type="submit"><span>Tính hóa đơn</span><span>→</span></button>
+    </aside>
+  </form>
+</main>
+<script>
+  const fileInput = document.querySelector('#file');
+  const fileName = document.querySelector('#file-name');
+  fileInput.addEventListener('change', () => {
+    fileName.textContent = fileInput.files.length ? fileInput.files[0].name : 'UTF-8 · tối đa 10 MB';
+  });
+</script>
+</body>
+</html>
