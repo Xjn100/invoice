@@ -3,4 +3,6 @@ target/
 *.jar
 *.log
 .idea/
-.vscode/
+.vscode/*
+!DemoInvoice/.vscode/
+!DemoInvoice/.vscode/settings.json
